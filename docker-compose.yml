@@ -1,7 +1,9 @@
 version: "3.7"
 services:
     ray-rllib:
-        build: .
+        build:
+            context: ./app
+            dockerfile: ./Dockerfile
         volumes:
             - ./GymEnv:/app/GymEnv
             - ./Training:/app/Training
