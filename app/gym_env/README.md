@@ -1,2 +1,0 @@
-- https://github.com/activatedgeek/gym-2048
-- https://pypi.org/project/gym-2048/
