@@ -5,8 +5,8 @@ services:
             context: ./app
             dockerfile: ./Dockerfile
         volumes:
-            - ./GymEnv:/app/GymEnv
-            - ./Training:/app/Training
+            - ./app:/app
+            - ./ray_results:/home/ray/ray_results
         working_dir: /app
         ports:
             - "6379:6379"  # Ray Core
