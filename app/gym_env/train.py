@@ -11,6 +11,6 @@ register_env("2048-v0", gym_env)
 tune.run(
     PPOTrainer,
     config={
-        "env": "2048-v0"
-    }
+        "env": "2048-v0",
+    },
 )

@@ -2,11 +2,13 @@ import numpy as np
 import gym
 import gym.spaces as spaces
 from gym.utils import seeding
-
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TKAgg')
 
 class Base2048Env(gym.Env):
   metadata = {
-      'render.modes': ['human'],
+      'render.modes': ['human', 'rgb_array'],
   }
 
   ##
@@ -21,13 +23,13 @@ class Base2048Env(gym.Env):
   DOWN = 3
 
   ACTION_STRING = {
-      LEFT: 'left',
-      UP: 'up',
-      RIGHT: 'right',
-      DOWN: 'down',
+      0: 'left',
+      1: 'up',
+      2: 'right',
+      3: 'down',
   }
 
-  def __init__(self, width=4, height=4):
+  def __init__(self, width=4, height=4, ACTION_STRING=ACTION_STRING):
     self.width = width
     self.height = height
 
@@ -40,6 +42,11 @@ class Base2048Env(gym.Env):
     # Internal Variables
     self.board = None
     self.np_random = None
+    self.viewer_fig = None
+    self.viewer_ax = None
+    self.viewer_image = None
+    self.selected_action = None
+    self.ACTION_STRING = ACTION_STRING
 
     self.seed()
     self.reset()
@@ -51,6 +58,7 @@ class Base2048Env(gym.Env):
   def step(self, action: int):
     """Rotate board aligned with left action"""
 
+    self.selected_action = action
     # Align board action with left action
     rotated_obs = np.rot90(self.board, k=action)
     reward, updated_obs = self._slide_left_and_merge(rotated_obs)
@@ -83,13 +91,40 @@ class Base2048Env(gym.Env):
 
     self.board = np.zeros((self.width, self.height), dtype=np.int64)
     self._place_random_tiles(self.board, count=2)
+    self.viewer = None
+    self.viewer_fig = None
+    self.viewer_ax = None
 
     return self.board
 
   def render(self, mode='human'):
-    if mode == 'human':
-      for row in self.board.tolist():
-        print(' \t'.join(map(str, row)))
+    if self.viewer_fig is None:
+      plt.ion()
+      self.viewer_fig, self.viewer_ax = plt.subplots(figsize=(self.width * 4, self.height * 4))
+      self.viewer_image = self.viewer_ax.imshow(self.board, vmin=0, vmax=1)
+      self.viewer_fig.tight_layout()
+      self.viewer_ax.set_title(f"2048 {self.height}x{self.width}")
+    else:
+      self.viewer_image.set_data(self.board)
+      self.viewer_image.autoscale()
+      self.viewer_ax.set_title(f"2048 {self.height}x{self.width} \t ACTION: {self.ACTION_STRING[self.selected_action].upper()}")
+
+    [t.set_visible(False) for t in self.viewer_ax.texts]
+    # Loop over data dimensions and create text annotations.
+    for i in range(self.height):
+        for j in range(self.width):
+            text = self.viewer_ax.text(j, i, self.board[i, j],
+                          ha="center", va="center", color="w")
+
+    plt.draw()
+    plt.pause(0.0001)
+    # plt.savefig("test.png")
+
+    return True
+    # if mode == 'human':
+    #   for row in self.board.tolist():
+    #     print(' \t'.join(map(str, row)))
+    # return self.board
 
   def _sample_tiles(self, count=1):
     """Sample tile 2 or 4."""

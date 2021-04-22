@@ -14,7 +14,7 @@ The 2048 environment used in this repository comes from [HERE](https://github.co
 
 Assuming you have docker-compose installed:
 1. Stand up the container stack using `docker-compose up`. If this works, the Ray webservices and Tensorboard should be active.
-2. In another terminal, run `docker-compose exec ray-rllib python gym_env/train.py` to start the training process.
+2. In another terminal, run `docker-compose exec ray-rllib python gym_env/train.py` to start the training process. Alternatively, to test rendering run `docker-compose exec ray-rllib python gym_env/basic.py` to visualize random actions.
 3. When you are done, use `ctrl+c` to stop the process (both the training and stack). And use `docker-compose down` to spin down the project containers.
 
 Additionally, visit the web services described below to monitor the training process.

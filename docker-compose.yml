@@ -4,9 +4,13 @@ services:
         build:
             context: ./app
             dockerfile: ./Dockerfile
+        environment:
+            - "QT_X11_NO_MITSHM=1"
+            - "DISPLAY"
         volumes:
             - ./app:/app
             - ./ray_results:/home/ray/ray_results
+            - /tmp/.X11-unix:/tmp/.X11-unix:rw
         working_dir: /app
         ports:
             - "6379:6379"  # Ray Core
