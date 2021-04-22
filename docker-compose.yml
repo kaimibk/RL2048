@@ -12,6 +12,13 @@ services:
             - ./ray_results:/home/ray/ray_results
             - /tmp/.X11-unix:/tmp/.X11-unix:rw
         working_dir: /app
+        deploy:
+            resources:
+              reservations:
+                devices:
+                - driver: nvidia
+                  count: 1
+                  capabilities: [gpu, utility]
         ports:
             - "6379:6379"  # Ray Core
             - "8265:8265"  # Ray Dashboard
